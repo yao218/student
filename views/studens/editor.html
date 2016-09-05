@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <title>编辑页面-{{data.name+"个人信息"}}</title>
+    {{include '../shared/header'}}
+    <link rel="stylesheet" href="/lib/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <form action="/student/editor/{{data.id}}" id="mainForm" method="post" class="form-horizontal">
+            <div class="form-group">
+                <label for="name" class="col-sm-2 control-label">姓名</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="name" name="name" value="{{data.name}}" placeholder="请输入姓名">
+                </div>
+            </div>
+            <div class="form-group">
+                <!--用于提交到服务器端的表单名称-->
+                <input type="hidden" name="avatar" value="{{data.avatar}}" id="iAvatar">
+                <label class="col-sm-2 control-label" for="avatar">证件照</label>
+                <div class="col-sm-10">
+                    <img id="imgCtrl" src="{{data.avatar}}" class="thumbnail" style="cursor:pointer;width:100px;max-height:80px" onerror="this.src='/images/chilinglin.jpg'">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="gender" class="col-sm-2 control-label">性别</label>
+                <div class="col-sm-10">
+                    <label class="radio-inline">
+                    <input type="radio" name="gender" id="inlineRadio1" value="男">男
+                    </label>
+                    <label class="radio-inline">
+                    <input type="radio" name="gender" id="inlineRadio2" value="女">女
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="birthday" class="col-sm-2 control-label">出生日期</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="birthday" name="birthday" value="{{data.birthdayForShow}}" placeholder="出生日期">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="mobile" class="col-sm-2 control-label">手机号</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="mobile" name="mobile" value="{{data.mobile}}" placeholder="请输入手机号">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email" class="col-sm-2 control-label">邮箱</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="email" name="email" value="{{data.email}}" placeholder="请输入邮箱">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="address" class="col-sm-2 control-label">地址</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="address" name="address" value="{{data.address}}" placeholder="请输入地址">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="hobby" class="col-sm-2 control-label">爱好</label>
+                <div class="col-sm-10">
+                    <textarea name="hobby" class="form-control" id="hobby" placeholder="请输入爱好">{{data.hobby}}</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="remarks" class="col-sm-2 control-label">备注</label>
+                <div class="col-sm-10">
+                    <textarea name="remarks" class="form-control" id="remarks" placeholder="请输入备注">{{data.remarks}}</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <button type="submit" class="btn btn-primary btn-block">提交</button>
+                </div>
+            </div>
+        </form>
+        <input type="file" style="width:0px;height:0px" id="selectFile">
+    </div>
+    {{include '../shared/footer'}}
+    <script src="/lib/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="/lib/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+    <script src="/lib/jquery/jquery.html5uploader.min.js"></script>
+    <script src="/lib/jquery/jquery.validate.min.js"></script>
+    <script src="/javascripts/common.js"></script>
+    <script>
+        ///birthday
+        $(function(){
+            $('#birthday').datepicker({
+                format: "yyyy-mm-dd", /////格式化选择结果
+                language: "zh-CN",////使用简体中文插件
+                autoclose: true,////自动关闭
+                todayHighlight: true/////高亮显示当前日期
+            });
+
+            /////设置性别选中
+            if(!!"{{data.gender}}"){
+                $("input[name='gender'][value='{{data.gender}}']").attr('checked','echeked');
+            }
+            else{
+                $("input[name='gender']").first().attr('checked','echeked');
+            }
+            
+
+            $("#imgCtrl").click(function(){$("#selectFile").click()});
+
+            ////html5Uploader 标准配置方法
+            $("#selectFile").html5Uploader({
+                name: "Filedata",
+                postUrl: "/common/file/uploadfile", ////图片上传的post提交地址
+                onSuccess: function (msg) { /////上传成功后的回调函数
+                    //console.log(msg);
+                    try {
+                        var url = JSON.parse(msg.currentTarget.response).url;
+                        $("#imgCtrl").attr("src", url); ////指定img控件的src属性
+                        $("#iAvatar").val(url); /////服务器端接收时需要获取的标签
+                    }
+                    catch (e) {
+                        console.log(e);
+                    }
+                }
+            });
+        })
+    </script>
+</body>
+
+</html>

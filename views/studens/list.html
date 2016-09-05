@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <title>列表页</title>
+    {{include '../shared/header'}}
+</head>
+
+<body>
+
+    <div class="container">
+        <a href="/student/editor/0" class="btn btn-danger pull-right">新增</a>
+        <a class="btn btn-success pull-right" onclick="popSearchFun()">查询</a>
+        <table class="table table-hover table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>证件照</th>
+                    <th>姓名</th>
+                    <th>性别</th>
+                    <th>手机号</th>
+                    <th>邮箱</th>
+                    <th>出生日期</th>
+                    <th>年龄</th>
+                    <th>爱好</th>
+                    <th>备注</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{each data}}
+                <tr>
+                    <td>{{$index+1}}</td>
+                    <td><img class="thumbnail img-circle img-thumbnail" style="width:50px;max-height:50px;" src="{{$value.avatar}}"
+                        /></td>
+                    <td>{{$value.name}}</td>
+                    <td>{{$value.gender}}</td>
+                    <td>{{$value.mobile}}</td>
+                    <td>{{$value.email}}</td>
+                    <td>{{$value.birthdayForShow}}</td>
+                    <td>{{$value.age}}</td>
+                    <td>{{$value.hobby}}</td>
+                    <td>{{$value.remarks}}</td>
+                    <td>
+                        <a href="/student/editor/{{$value.id}}">修改</a>
+                        <a href="javascript:void(0)" onclick="deleteFun('{{$value.id}}')">删除</a>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        <nav>
+            <ul class="pagination">
+                <li class="{{page <= 1 ? 'disabled' : ''}}">
+                    <a href="{{page==1?'#':'/student/list/'+(page-1)}}">上一页</a>
+                </li>
+
+                {{each pages as p}} {{if p == page}}
+                <li class="active"><span>{{page}}</span></li>
+                {{else}}
+                <li><a href="/student/list/{{p}}">{{p}}</a></li>
+                {{/if}} {{/each}}
+
+                <li class="{{page >= pageCount ? 'disabled' : ''}}">
+                    <a href="{{page>=pageCount?'#':'/student/list/'+(page+1)}}">下一页</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="modal fade" id="modalDelate">
+        <div class="modal-dialog">
+            <div class="modal-content" style="width:400px;">
+                <div class="modal-header" style="text-align:center;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">提示</h4>
+                </div>
+                <div class="modal-body" style="text-align:center;height:70px;">
+                    <p>确定要删除吗？</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="doDeleteFun()" data-dismiss="modal">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form action="/student/delete" id="formDelete" method="post">
+        <input type="hidden" id="hfDelID" name="id">
+    </form>
+
+    <div class="modal fade" id="modelSearch">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="text-align:center;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">条件筛选</h4>
+                </div>
+                <div class="modal-body">
+                    <form action="/student/list/1" id="mainForm" method="get" class="form-horizontal">
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">姓名</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="name" name="name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="gender" class="col-sm-2 control-label">性别</label>
+                            <div class="col-sm-10">
+                                <label class="radio-inline">
+                                    <input type="radio" name="gender"  id="inlineRadio1" value="男">男
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="gender" id="inlineRadio2" value="女">女
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="mobile" class="col-sm-2 control-label">手机号</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="mobile" name="mobile">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="col-sm-2 control-label">邮箱</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="email" name="email">
+                            </div>
+                        </div>
+                        <!--<div class="form-group">
+                            <label for="age" class="col-sm-2 control-label">年龄</label>
+                            <div class="col-sm-10">
+                                <label>
+                                 <input type="text" id="age" class="form-control" style="width:80px;" name="minAge" placeholder="最小年龄">
+                                </label> -
+                                <label>
+                                 <input type="text" class="form-control" style="width:80px;" name="maxAge" placeholder="最大年龄">
+                                </label>
+                            </div>
+                        </div>-->
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <button type="submit" class="btn btn-primary btn-block">提交</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    {{include '../shared/footer'}}
+    <script>
+       var _idForDel = '';
+        function deleteFun(id){
+            _idForDel = id;
+            $("#modalDelate").modal();
+        }
+        function doDeleteFun(){
+            if(_idForDel){
+                $("#hfDelID").val(_idForDel);
+                $("#formDelete").submit();
+            }
+        }
+
+        function popSearchFun(){
+            $("#modelSearch").modal();
+        }
+        function doSearchFun(e){
+            //e.preventDefault();
+            //alert('sss')
+        }
+        $(function(){
+           
+        }) 
+    </script>
+</body>
+
+</html>
