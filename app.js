@@ -5,9 +5,7 @@ var bodyParser = require('body-parser');
 
 var fs = require('fs');
 
-
 var app = express();
-
 ////引入arttemplate模板
 var template = require('art-template');
 template.config('base', '');
@@ -16,19 +14,11 @@ app.engine('.html', template.__express);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'html');
 
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-/**
- * 初始化项目的一些基础目录结构
- * @param  {[type]}   req  [description]
- * @param  {[type]}   res  [description]
- * @param  {Function} next [description]
- * @return {[type]}        [description]
- */
 function initApp(req, res, next) {
     /////判断目录是否存在
     fs.exists('./public/uploads', function (d) {
@@ -45,8 +35,8 @@ function initApp(req, res, next) {
     })
 }
 
-app.use('/common', require('./routes/common/common'));
-app.use('/student',require('./routes/studens'));
+app.use('/common', require('./routes/common'));
+app.use('/student',require('./routes/students'));
 
 app.get('/',initApp,(req,res)=>{
   // res.send('app启动');
@@ -54,7 +44,6 @@ app.get('/',initApp,(req,res)=>{
 })
 
 
-
-app.listen(3000,(req,res)=>{
-  console.log('服务器运行中')
+app.listen(3000,(res,req)=>{
+  console.log('服务器运行中....')
 })
